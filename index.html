@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Te amo mi niña</title>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black url('fotos/fondo.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', 'Brush Script MT', cursive, sans-serif;
+      touch-action: manipulation;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    /* Añadimos un overlay para mejorar la legibilidad */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      z-index: -1;
+    }
+    .floating-text, .heart, .photo {
+      position: absolute;
+      animation: float 30s linear infinite;
+      will-change: transform;
+    }
+    .floating-text {
+      color: #000000;
+      font-size: 5vw;
+      font-weight: bold;
+      text-shadow: 
+        1px 1px 1px rgba(255,255,255,0.8),
+        -1px -1px 1px rgba(255,255,255,0.8);
+      filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
+      font-style: italic;
+      letter-spacing: 1px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="50" font-family="Brush Script MT" font-size="30" fill="black">a</text></svg>') 0 0 repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-stroke: 0.5px #000;
+      -webkit-text-stroke: 0.5px #000;
+      z-index: 2;
+    }
+    .heart {
+      width: 10vw;
+      height: 10vw;
+      min-width: 40px;
+      min-height: 40px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="red" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat center center;
+      background-size: contain;
+      filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+      z-index: 1;
+    }
+    .photo {
+      width: 25vw;
+      height: 25vw;
+      max-width: 150px;
+      max-height: 150px;
+      min-width: 80px;
+      min-height: 80px;
+      object-fit: cover;
+      border-radius: 2vw;
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+      border: 2px solid white;
+      filter: brightness(1.05);
+      z-index: 3;
+    }
+    @keyframes float {
+      0% {
+        transform: translate3d(var(--x, 0), var(--y, 0), var(--z, 0)) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(var(--x, 0), calc(var(--y, 0) - 200vh), var(--z, 0)) scale(1.5);
+        opacity: 0;
+      }
+    }
+    .music-control {
+      position: fixed;
+      bottom: 5vh;
+      right: 5vw;
+      background: rgba(0,0,0,0.7);
+      padding: 4vw;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .music-control img {
+      width: 8vw;
+      height: 8vw;
+      min-width: 30px;
+      min-height: 30px;
+      filter: invert(1);
+    }
+    /* Overlay de inicio para móviles */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .start-button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      border-radius: 50px;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      transition: all 0.3s;
+    }
+    .start-button:active {
+      transform: scale(0.95);
+      background: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <audio id="bgMusic" loop>
+    <source src="musica/cancion.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+  
+  <div class="music-control" id="musicToggle">
+    <img src="https://cdn-icons-png.flaticon.com/512/3669/3669483.png" alt="Music control">
+  </div>
+
+  <div class="start-overlay" id="startOverlay">
+    <h2>Para mi niña</h2>
+    <p>Toca comenzar para vivir esta experiencia especial</p>
+    <div class="start-button" id="startButton">Comenzar</div>
+  </div>
+
+  <script>
+    // Detectar si es móvil
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    const body = document.body;
+    const phrases = ["mi niña bonita", "Te amo sara", "15-09-2025"];
+    const imageUrls = [
+      "fotos/foto1.jpg",
+      "fotos/foto2.png",
+      "fotos/foto3.jpg",
+      "fotos/foto4.png",
+      "fotos/foto5.jpg",
+      "fotos/foto6.png",
+      "fotos/foto7.jpg",
+      "fotos/foto8.png",
+      "fotos/foto9.jpg",
+      "fotos/foto10.png"
+    ];
+
+    // Control de música
+    const music = document.getElementById('bgMusic');
+    const musicToggle = document.getElementById('musicToggle');
+    const startOverlay = document.getElementById('startOverlay');
+    const startButton = document.getElementById('startButton');
+    let isPlaying = false;
+    let animationStarted = false;
+    
+    // Función para iniciar la experiencia completa
+    function startExperience() {
+      if (animationStarted) return;
+      
+      startOverlay.style.display = 'none';
+      animationStarted = true;
+      startMusic();
+      
+      // Iniciar la creación de elementos flotantes
+      initFloatingElements();
+    }
+    
+    // Función para iniciar la música
+    function startMusic() {
+      if (isPlaying) return;
+      
+      music.volume = 0.7;
+      
+      if (isMobile) {
+        music.play()
+          .then(() => {
+            isPlaying = true;
+            musicToggle.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/3669/3669483.png" alt="Music control">';
+          })
+          .catch(error => {
+            console.error("Error al reproducir música:", error);
+          });
+        return;
+      }
+      
+      // Para desktop
+      music.play()
+        .then(() => {
+          isPlaying = true;
+          musicToggle.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/3669/3669483.png" alt="Music control">';
+        })
+        .catch(error => {
+          console.error("Error al reproducir música:", error);
+        });
+    }
+    
+    // Evento para el botón de inicio
+    startButton.addEventListener('click', startExperience);
+    
+    // Evento para el botón de música
+    musicToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      if (isPlaying) {
+        music.pause();
+        musicToggle.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/7960/7960808.png" alt="Music control">';
+      } else {
+        music.play()
+          .then(() => {
+            musicToggle.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/3669/3669483.png" alt="Music control">';
+          })
+          .catch(error => {
+            console.error("Error al reanudar música:", error);
+          });
+      }
+      isPlaying = !isPlaying;
+    });
+
+    // Inicializar elementos flotantes
+    function initFloatingElements() {
+      // Ajustar cantidad de elementos para móviles
+      const elementsPerInterval = isMobile ? 1 : 3;
+      const intervalTime = isMobile ? 2000 : 1000;
+
+      let currentPhotoIndex = 0;
+      
+      function getNextPhoto() {
+        const photo = imageUrls[currentPhotoIndex];
+        currentPhotoIndex = (currentPhotoIndex + 1) % imageUrls.length;
+        return photo;
+      }
+
+      function createFloatingElement(type, x, y, z) {
+        const el = document.createElement('div');
+        el.style.setProperty('--x', x + 'vw');
+        el.style.setProperty('--y', y + 'vh');
+        el.style.setProperty('--z', z + 'px');
+        el.style.animationDuration = (Math.random() * 20 + 20) + 's';
+
+        if (type === 'text') {
+          el.className = 'floating-text';
+          el.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+        } else if (type === 'heart') {
+          el.className = 'heart';
+        } else if (type === 'photo') {
+          const img = document.createElement('img');
+          img.src = getNextPhoto();
+          img.className = 'photo';
+          img.loading = 'lazy';
+          img.onerror = function() {
+            const originalSrc = this.src;
+            if (originalSrc.endsWith('.jpg')) {
+              this.src = originalSrc.replace('.jpg', '.png');
+            } else if (originalSrc.endsWith('.png')) {
+              this.src = originalSrc.replace('.png', '.jpg');
+            } else {
+              this.style.display = 'none';
+            }
+          };
+          el.appendChild(img);
+        }
+        body.appendChild(el);
+        
+        // Eliminar elemento cuando termine la animación
+        setTimeout(() => {
+          if (el.parentNode) {
+            el.parentNode.removeChild(el);
+          }
+        }, 30000);
+      }
+
+      // Crear elementos flotantes
+      setInterval(() => {
+        for (let i = 0; i < elementsPerInterval; i++) {
+          const x = Math.random() * 80 + 10;
+          const y = Math.random() * 50 + 50;
+          const z = Math.random() * 500 - 250;
+          const elementType = Math.random() > 0.5 ? 'photo' : (Math.random() > 0.5 ? 'text' : 'heart');
+          createFloatingElement(elementType, x, y, z);
+        }
+      }, intervalTime);
+    }
+
+    // Prevenir zoom en móviles
+    document.addEventListener('gesturestart', function(e) {
+      e.preventDefault();
+    });
+
+    // Prevenir desplazamiento en móviles
+    document.addEventListener('touchmove', function(e) {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  </script>
+</body>
+</html>
